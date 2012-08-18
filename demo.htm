@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>gzhelimgator demo</title>
+        <meta name="author" content="Dmitry Groza">
+        <script src="gzhelimgator.js"></script>
+        <style>
+            body {
+                margin: 20px auto;
+                width: 800px;
+            }
+            canvas {
+                border: 1px solid #ccc;
+            }
+        </style>
+    </head>
+    
+    <body>
+        
+        <canvas id="img-gallery" width="400" height="250"></canvas>
+        <div id="img-view"></div>
+        
+        <script>
+            /**
+             * Generate random images sources
+             * 
+             * @author Dmitry Groza
+             * @param int cnt count of images
+             * @param arr[arr[int width, int height]] measurements 
+             * 
+             * @return arr[string imgSrces]
+             */
+            var dummyImageGenerator = function(cnt, measurements){
+                var urlPattern = 'http://flickholdr.com/%width%/%height%';
+                var imgs = [];
+                for (var i = 0; i < cnt; i++) {
+                    imgs.push(
+                        urlPattern.replace('%width%', measurements[i % measurements.length][0])
+                                  .replace('%height%', measurements[i % measurements.length][1])
+                    );
+                }
+                return imgs;
+            }
+            
+            var imgs = dummyImageGenerator(10, [
+                [400, 200],
+                [200, 300],
+                [300, 100],
+                [300, 250],
+                [400, 400],
+                [300, 200],
+                [350, 700],
+                [200, 200],
+                [250, 350],
+                [150, 300]
+            ]);
+            
+            var img;
+            for(var i=0; i < imgs.length; i++) {
+                img = new Image();
+                img.src = imgs[i];
+                img.height = 100;
+                document.getElementById('img-view').appendChild(img);
+            }
+            
+            var ctx = document.getElementById('img-gallery').getContext('2d');
+            
+        </script>
+    </body>
+</html>
