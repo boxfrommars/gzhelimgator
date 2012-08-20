@@ -2,16 +2,19 @@ gzhelimgator
 ============
 
 галерея картинок. отрисовывает картинки в контейнере в заданных блоках, по таймеру меняет изображение, используя анимациию. 
+
 [демо](http://boxfrommars.github.com/demos/gzhelimgator/index.htm "gzhelimgator demo")
 
 использование
 -------------
 
 html:
+
     <canvas id="img-gallery" width="400" height="250"></canvas>
     <div id="img-view"></div>
 
 js:
+
     // раскладка галереи по блокам 
     var layout = [
         {
