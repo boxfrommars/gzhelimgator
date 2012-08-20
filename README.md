@@ -44,7 +44,6 @@ js:
         "http://flickholdr.com/700/450", 
         "http://flickholdr.com/500/750"
     ]
-    
 
     // канвас, в который мы будем оторбражать картинки
     var container = document.getElementById('img-gallery');
@@ -77,5 +76,3 @@ js:
 добавить новый рендерер/тип анимации (для подробностей см. исходный код):
 
     Gzhelimgator.addRenderer(animationName, function(container, block) {});
-
-    
