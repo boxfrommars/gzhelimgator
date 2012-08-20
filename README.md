@@ -66,13 +66,16 @@ js:
     // включаем галерею
     var gallery = new Gzhelimgator(container, imgs, layout, interval, clickHandler, animationType);
 
-остановить анимацию
+остановить анимацию:
+
     gallery.stop();
 
-продолжить анимацию
+продолжить анимацию:
+
     gallery.start();
 
-добавить новый рендерер/тип анимации (для подробностей см. исходный код)
+добавить новый рендерер/тип анимации (для подробностей см. исходный код):
+
     Gzhelimgator.addRenderer(animationName, function(container, block) {});
 
     
