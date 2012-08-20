@@ -7,64 +7,152 @@
         <script src="gzhelimgator.js"></script>
         <style>
             body {
-                margin: 20px auto;
-                width: 800px;
+                margin: 20px;
+                background: #333;
+                font-family: monospace;
             }
             canvas {
                 border: 1px solid #ccc;
+                margin: 10px;
+                cursor: pointer;
+                display: inline;
+                background: #ccc;
+            }
+            #img-view {
+                padding: 10px;
+            }
+            #project-link {
+                display: block;
+                float: right;
+                color: #ccc;
             }
         </style>
     </head>
     
     <body>
-        
+        <a id="project-link" href="https://github.com/boxfrommars/gzhelimgator">gzhelimgator</a>
         <canvas id="img-gallery" width="400" height="250"></canvas>
+        <canvas id="img-gallery-slide" width="598" height="250"></canvas>
         <div id="img-view"></div>
         
         <script>
             /**
-             * Generate random images sources
+             * генерирует картинки по заданным размерам, 
+             * количество картинок (cnt) может быть больше, чем размер массива, тогда будут картинки с одинаковыми размерами
              * 
-             * @author Dmitry Groza
-             * @param int cnt count of images
-             * @param arr[arr[int width, int height]] measurements 
+             * @param cnt количество генерируемых картинок ()
+             * @param [[int width, int height]] размеры изображений
              * 
-             * @return arr[string imgSrces]
+             * @return [string imgSrc]
              */
-            var dummyImageGenerator = function(cnt, measurements){
+            var dummyImageGenerator = function(cnt, sizes){
                 var urlPattern = 'http://flickholdr.com/%width%/%height%';
                 var imgs = [];
+                
                 for (var i = 0; i < cnt; i++) {
                     imgs.push(
-                        urlPattern.replace('%width%', measurements[i % measurements.length][0])
-                                  .replace('%height%', measurements[i % measurements.length][1])
+                        urlPattern.replace('%width%', sizes[i % sizes.length][0])
+                                  .replace('%height%', sizes[i % sizes.length][1])
                     );
                 }
                 return imgs;
             }
             
-            var imgs = dummyImageGenerator(10, [
-                [400, 200],
-                [200, 300],
-                [300, 100],
-                [300, 250],
-                [400, 400],
-                [300, 200],
-                [350, 700],
-                [200, 200],
-                [250, 350],
-                [150, 300]
-            ]);
-            
-            var img;
-            for(var i=0; i < imgs.length; i++) {
-                img = new Image();
-                img.src = imgs[i];
-                img.height = 100;
-                document.getElementById('img-view').appendChild(img);
+            // http://javascript.ru/Math.random
+            var getRandomIntegerBetween = function(min, max) {
+                return (Math.floor(Math.random() * (max - min + 1)) + min);
             }
             
-            var ctx = document.getElementById('img-gallery').getContext('2d');
+            /**
+             * генерирует массив случайных размеров
+             * 
+             * @param min int min * scale -- минимальный размер изображения
+             * @param max int max * scale -- максимальный размер изображения
+             * @param scale int масштаб изображения
+             * @param cnt int кол-во генерируемых размеров
+             * 
+             * @return [int width, int height]
+             */
+            var dummySizeGenerator = function(min, max, scale, cnt) {
+                var sizes = [];
+                for (var i = 0; i < cnt; i++) {
+                    sizes.push([
+                        getRandomIntegerBetween(min, max) * scale, 
+                        getRandomIntegerBetween(min, max) * scale
+                    ]);
+                }
+                return sizes;
+            }
+            
+            // здесь будем выводить исходные изображения
+            var imageViewContainer = document.getElementById('img-view');
+            
+            // демо 1
+            // раскладка галереи по блокам 
+            var layout = [
+                    {
+                        size: {width: 200, height: 250}, 
+                        position: {x: 0, y: 0}
+                    },
+                    {
+                        size: {width: 200, height: 125}, 
+                        position: {x: 200, y: 0}
+                    },
+                    {
+                        size: {width: 200, height: 125}, 
+                        position: {x: 200, y: 125}
+                    }
+                ]
+             
+            // генерируем случайные картинки случайных размеров
+            var imgs = dummyImageGenerator(10, dummySizeGenerator(4, 20, 50, 10));
+            
+            // срабатывает по клику на контейнер (если попали в блок), принимает собственно событие
+            // и блок на котором кликнули -- объект вида {image: object Image(), size: {...}, position: {}}
+            var clickHandler = function(e, block){
+                imageViewContainer.innerHTML = '';
+                imageViewContainer.appendChild(block.image);
+            }
+            
+            // задержка между обновлением каринок
+            var interval = 2000;
+            
+            // запускаем галерею
+            var gallery = new Gzhelimgator(document.getElementById('img-gallery'), imgs, layout, 2000, clickHandler);
+            
+            
+            // демо 2 (slide)
+            var layoutSlide = [
+                {
+                    size: {width: 98, height: 250}, 
+                    position: {x: 0, y: 0}
+                },
+                {
+                    size: {width: 98, height: 250}, 
+                    position: {x: 100, y: 0}
+                },
+                {
+                    size: {width: 98, height: 250}, 
+                    position: {x: 200, y: 0}
+                },
+                {
+                    size: {width: 98, height: 250}, 
+                    position: {x: 300, y: 0}
+                },
+                {
+                    size: {width: 98, height: 250}, 
+                    position: {x: 400, y: 0}
+                },
+                {
+                    size: {width: 98, height: 250}, 
+                    position: {x: 500, y: 0}
+                },
+            ];
+                
+            var imgsSlide = dummyImageGenerator(10, dummySizeGenerator(4, 20, 50, 10));
+            
+            // добавляем параметр renderer = slide (доступны fade (default) и slide)
+            var gallerySlide = new Gzhelimgator(document.getElementById('img-gallery-slide'), imgsSlide, layoutSlide, 1000, clickHandler, 'slide');
             
         </script>
     </body>
